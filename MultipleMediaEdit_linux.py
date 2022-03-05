@@ -30,8 +30,16 @@ def MP3_edit(config_file, long_mp3_file, file_list, inputfolder, outputfolder):
   config_f = open(config_file)
   for line in config_f.readlines():
     if len(line) > 2:
-      time_stamps.append(line.strip().split('-')[0].strip())
-      line = line.strip().split('-')[1].strip()
+      try:
+        time_stamps.append(line.strip().split('-')[0].strip())
+      except:
+        print "Waring: No time stamps in config file."
+
+      try:
+        line = line.strip().split('-')[1].strip()
+      except:
+        print "Waring: No time stamps in config file."
+
       song_names.append(line.strip().split('_')[0])
       singers.append(line.strip().split('_')[1])
 
@@ -101,28 +109,28 @@ def MP3_edit(config_file, long_mp3_file, file_list, inputfolder, outputfolder):
     os.rename(file, new_name.decode('UTF-8'))
 
 #Functional: Rename/Edit all the files in input folder
-#def Rename_edit_files_name():
-#  new_name=''
-#  for i in range(0, len(file_list)):
-#    full_file_name = os.path.join(input_folder_Or_file, file_list[i])
-#    if os.path.isfile(full_file_name):
-#      print "full_file_name:" + full_file_name
-#
-#      dir_path = os.path.dirname(full_file_name)
-#      base_name = os.path.basename(full_file_name)
-#      suffix_name = os.path.splitext(full_file_name)[-1]
-#
-#      if len(start_num) == 0 :
-#        new_name = dir_path + '/' + addstr_begin + base_name.replace(removestr, '').replace(suffix_name, '') + addstr_end + suffix_name
-#      else: #Rename file with specify number sequence
-#        if len(start_num) == 1:
-#          start_num = '0' + start_num
-#        new_name = dir_path + '/' + start_num + suffix_name
-#
-#        start_num = str(int(start_num)+1)
-#      print "Rename to:" + new_name + '\n'
-#
-#      os.rename(full_file_name, new_name)
+def Rename_edit_files_name(file_list, inputfolder, start_num):
+  new_name=''
+  for i in range(0, len(file_list)):
+    full_file_name = os.path.join(inputfolder, file_list[i])
+    if os.path.isfile(full_file_name):
+      print "full_file_name:" + full_file_name
+
+      out_dir = os.path.dirname(full_file_name)
+      base_name = os.path.basename(full_file_name)
+      suffix_name = os.path.splitext(full_file_name)[-1]
+
+      if len(start_num) == 0 :
+        new_name = out_dir + '/' + addstr_begin + base_name.replace(removestr, '').replace(suffix_name, '') + addstr_end + suffix_name
+      else: #Rename file with specify number sequence
+        if len(start_num) == 1:
+          start_num = '0' + start_num
+        new_name = out_dir + '/' + start_num + suffix_name
+
+        start_num = str(int(start_num)+1)
+      print "Rename to:" + new_name + '\n'
+
+      os.rename(full_file_name, new_name)
 
 def print_help(script_name):
   print script_name + "\n -i <input folder or file>\n -r <remove_str>\n -b <add str at begin>\n -e <add str at end>\n" +\
@@ -190,8 +198,8 @@ def main(script_name, argv):
 
   if len(config_file) > 0:
     MP3_edit(config_file, long_mp3_file, file_list, inputfolder, outputfolder)
-#  else:
-#    Rename_edit_files_name()
+  else:
+    Rename_edit_files_name(file_list, inputfolder, start_num)
 
 if __name__ == "__main__":
   main(sys.argv[0], sys.argv[1:])
